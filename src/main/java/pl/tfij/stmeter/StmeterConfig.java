@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnBean(MeterRegistry.class)
-public class StmeterConfig {
+class StmeterConfig {
 
-    public StmeterConfig(MeterRegistry meterRegistry) {
+    StmeterConfig(MeterRegistry meterRegistry) {
         Stmeter.init(meterRegistry);
     }
 

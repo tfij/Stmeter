@@ -1,6 +1,6 @@
-# Stmeter
+# Stmeter lib
 
-Stmeter is an abstraction to call micrometer metrics in spring framework with no need of injecting `meterRegistry` bean.
+`Stmeter` is an abstraction to call micrometer metrics in spring framework with no need of injecting `meterRegistry` bean.
 
 Basically, the standard metric call like
 
@@ -48,7 +48,30 @@ Stmeter.counter("sample.metric").increment();
 Library provide spring autoconfiguration to setup the `Stmeter` class.
 The `Stmeter` will be initialized with instance of `meterRegistry` spring bean.
 
+## Meter async code execution
+
+The Micrometer provide `Timer` class to meter code time execution.
+When working with async code, usage of `Timer` require to add some boilerplate.
+
+To measure async code time execution, `Stmeter` library provide `AsyncTimer` class.
+
+```
+void codeWithMetrics() {
+    ...
+    CompletableFuture<String> result = Stmeter.asyncTimer("metricName").record(() -> asyncFunction());
+    ...
+}
+
+...
+
+CompletableFuture<String> asyncFunction() {
+    ...
+}
+```
+
 ## Limitations
+
+### Metrics during spring context initialization
 
 `Stmeter` is initialized while building the context and initializing the spring beans.
 For this reason, you may find that `Stmeter` is initialized later than some beans.
@@ -81,4 +104,6 @@ class MyComponent {
 }
 ```
 
+### Many MeterRegistry beans
 
+If for some reason you use two or more `MeterRegistry` beans, then by design, this library can handle only one of such bean.
